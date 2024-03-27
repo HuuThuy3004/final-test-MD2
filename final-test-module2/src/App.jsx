@@ -7,7 +7,7 @@ export default function App() {
   const [todo, setTodo] = useState('')
   const [currentEdit, setCurrentEdit] = useState('')
   const [currentEditedItem, setCurrentEditedItem] = useState('')
-  const [checked, setChecked] = useState(false)
+  // const [checked, setChecked] = useState(false)
 
   //Chuc nang add
   const handleAddTodo = () => {
@@ -18,6 +18,7 @@ export default function App() {
       let newTodoItem = {
         id: Math.floor((Math.random() * 100)),
         name: todo,
+        checked: false
       }
       let todoArr = [...allTodos]
       todoArr.push(newTodoItem)
@@ -35,10 +36,17 @@ export default function App() {
   }
 
   //Chuc nang complete
-  const handleComplete = (e) => {
-    setChecked({...checked, status: e.target.checked })
+  const handleComplete = (id) => {
+    const newTodoList = allTodos.map((item) => {
+      if (item.id == id) {
+        return { ...item, checked: !item.checked }
+      }
+      return item
+    })
+    setAllTodos(newTodoList)
+
   }
-  
+
   //Chuc nang edit
   const handleEdit = (index, item) => {
     setCurrentEdit(index)
@@ -86,7 +94,7 @@ export default function App() {
                         placeholder="Update todo"
                         className="p-2 text-xs text-white bg-red-400 border-x-2 border-y-2 w-[248px] focus:outline-none"
                         value={currentEditedItem.name}
-                        onChange={(e) => handleUpdateTodo(e.target.value)}
+                        onChange={(e) => { handleUpdateTodo(e.target.value) }}
                       />
                       <button
                         className="outline outline-1 outline-offset-1 cursor-pointer text-xs p-2 rounded-sm hover:bg-slate-900 focus:outline-none"
@@ -102,13 +110,13 @@ export default function App() {
               return (
                 <>
                   <div className="flex items-center justify-between mt-8 bg-red-300 p-2" key={index}>
-                    <h1 className={`text-lg ${checked.status ? 'line-through' : ''}`}>{index + 1}. {item.name}</h1>
+                    <h1 className={`text-lg ${item.checked ? 'line-through' : ''}`}>{index + 1}. {item.name}</h1>
                     <div className="flex gap-2">
                       <div className="flex items-center">
                         <input
                           id="green-checkbox"
                           type="checkbox"
-                          onChange={handleComplete}
+                          onChange={() => handleComplete(item.id)}
                           className="w-4 h-4 text-green-800 bg-gray-100 border-gray-200 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-1 " />
                       </div>
                       <FaEdit
